@@ -180,6 +180,17 @@
     });
   }
 
+  /* ---------- Protección de datos bajo el formulario: se despliega al pulsar ---------- */
+  const legalToggle = document.querySelector("[data-legal-toggle]");
+  const legalInfo = document.querySelector("[data-legal-info]");
+  if (legalToggle && legalInfo) {
+    legalToggle.addEventListener("click", () => {
+      const open = legalToggle.getAttribute("aria-expanded") !== "true";
+      legalToggle.setAttribute("aria-expanded", String(open));
+      legalInfo.classList.toggle("is-open", open);
+    });
+  }
+
   /* ---------- Enlaces pendientes (páginas legales, LinkedIn) ---------- */
   document.querySelectorAll("[data-todo]").forEach((a) => {
     a.title = "Pendiente de crear";

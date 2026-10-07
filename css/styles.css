@@ -845,14 +845,46 @@ strong { font-weight: 700; color: var(--ink); }
   .marquee-track { animation: none; }
 }
 
-/* ---------- Protección de datos bajo el formulario ---------- */
-.form-legal { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 0.8rem; line-height: 1.45; color: var(--muted); }
-.form-legal p { margin: 0 0 8px; }
-.form-legal p:last-child { margin: 8px 0 0; }
-.form-legal-title { font-family: var(--font-head); font-weight: 600; color: var(--ink); }
-.form-legal dl { display: grid; grid-template-columns: max-content 1fr; gap: 3px 14px; margin: 0; }
-.form-legal dt { font-weight: 600; color: var(--text); }
-.form-legal dd { margin: 0; }
+/* ---------- Protección de datos bajo el formulario: una línea que se despliega ---------- */
+.form-legal { margin-top: 18px; font-size: 0.8rem; line-height: 1.5; color: var(--muted); }
+.form-legal-line { margin: 0; }
+.form-legal-line a { color: var(--text); }
+.form-legal-toggle {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.form-legal-toggle::after {
+  content: "";
+  display: inline-block;
+  width: 0.42em;
+  height: 0.42em;
+  margin: 0 0.15em 0.15em 0.45em;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+}
+.form-legal-toggle[aria-expanded="true"]::after { transform: translateY(0.2em) rotate(-135deg); }
+.form-legal-info {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 3px 14px;
+  margin: 10px 0 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--soft);
+}
+.js .form-legal-info:not(.is-open) { display: none; }
+.form-legal-info dt { font-weight: 600; color: var(--text); }
+.form-legal-info dd { margin: 0; }
 
 /* ---------- Páginas legales ---------- */
 .legal-header { border-bottom: 1px solid var(--line); background: var(--white); }
@@ -879,6 +911,6 @@ strong { font-weight: 700; color: var(--ink); }
 .legal-footer .footer-bottom { margin-top: 0; border-top: 0; }
 .legal a[aria-current="page"] { color: #fff; }
 @media (max-width: 520px) {
-  .legal-data, .form-legal dl { grid-template-columns: 1fr; gap: 2px; }
+  .legal-data, .form-legal-info { grid-template-columns: 1fr; gap: 2px; }
   .legal-data dd { margin-bottom: 10px; }
 }
