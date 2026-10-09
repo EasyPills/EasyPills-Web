@@ -555,6 +555,7 @@ strong { font-weight: 700; color: var(--ink); }
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(22px, 3vw, 44px);
+  margin-bottom: clamp(32px, 5vw, 72px);   /* espacio para la píldora rosa decorativa */
 }
 .method::before {
   content: "";
@@ -567,8 +568,7 @@ strong { font-weight: 700; color: var(--ink); }
 }
 .method:nth-child(2)::before { background: var(--pink); }
 .method:nth-child(3)::before { background: var(--blue); }
-.method h4 { margin-bottom: 8px; font-size: 1.3rem; }
-.method p { margin: 0; color: var(--on-dark); }
+.method h4 { margin: 0; font-size: 1.3rem; }
 
 /* ---------- Quiénes somos ---------- */
 .about-grid {
