@@ -692,6 +692,8 @@ strong { font-weight: 700; color: var(--ink); }
   font-size: 0.95rem;
 }
 .contact-form .btn { width: 100%; }
+.contact-form .btn:disabled { opacity: 0.6; cursor: progress; }
+.form-hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 
 /* ---------- Pie ---------- */
 .site-footer {

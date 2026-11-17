@@ -130,12 +130,13 @@
   }
 
   /* ---------- Formulario de contacto (nombre, correo y teléfono) ----------
-     Provisional: abre el correo del visitante con sus datos ya escritos.
-     Sustituir por un servicio de formularios antes de publicar. */
+     Envía los datos a un script de Google (tools/contact-form.gs) que nos los
+     manda por correo con el asunto "Contact Web - <nombre>". Su dirección está en data-endpoint. */
   const form = document.querySelector("[data-contact-form]");
   if (form) {
     const error = form.querySelector("[data-form-error]");
     const status = form.querySelector("[data-form-status]");
+    const button = form.querySelector('[type="submit"]');
     const messages = {
       nombre: "Escribe tu nombre, por favor.",
       email: "Revisa tu correo electrónico: parece que falta algo.",
@@ -148,7 +149,7 @@
       return !el.value.trim() || !el.checkValidity();
     };
     form.addEventListener("input", (e) => e.target.removeAttribute("aria-invalid"));
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
       error.hidden = true;
       status.hidden = true;
@@ -161,22 +162,27 @@
         return;
       }
       if (form.hasAttribute("data-preview")) {
-        status.textContent = "Vista previa: el formulario todavía no está conectado. En la web publicada, aquí nos llegarán tus datos.";
+        status.textContent = "Vista previa: desde aquí no se envía nada. En la web publicada, tus datos nos llegarán por correo.";
         status.hidden = false;
         return;
       }
-      const data = new FormData(form);
-      const body = [
-        "Hola, me gustaría que me contactarais.",
-        "",
-        `Nombre: ${data.get("nombre")}`,
-        `Correo: ${data.get("email")}`,
-        `Teléfono: ${data.get("telefono")}`,
-      ].join("\n");
-      const subject = `Contacto desde la web · ${data.get("nombre")}`;
-      window.location.href = `mailto:${form.dataset.mailto}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      status.textContent = "¡Gracias! Se abrirá tu correo con tus datos listos para enviar.";
-      status.hidden = false;
+      // Envío como formulario normal (sin cabeceras propias), para que Google lo acepte sin preguntas previas.
+      button.disabled = true;
+      button.textContent = "Enviando…";
+      try {
+        const res = await fetch(form.dataset.endpoint, { method: "POST", body: new URLSearchParams(new FormData(form)) });
+        const result = await res.json();
+        if (!result.ok) throw new Error("rechazado");
+        form.reset();
+        status.textContent = "¡Gracias! Hemos recibido tus datos y te escribiremos muy pronto.";
+        status.hidden = false;
+      } catch {
+        error.textContent = "No hemos podido enviarlo. Inténtalo de nuevo o escríbenos a contacto@easypills.studio.";
+        error.hidden = false;
+      } finally {
+        button.disabled = false;
+        button.textContent = "Enviar";
+      }
     });
   }
 

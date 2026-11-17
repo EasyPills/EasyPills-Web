@@ -247,10 +247,9 @@
           <img class="contact-easy" src="assets/img/easy-laptop-wave.png" alt="Easy saluda con la mano mientras sostiene su portátil." width="900" height="746" loading="lazy">
         </div>
 
-        <!-- TODO: conectar a un servicio de formularios (p. ej. Formspree, Netlify Forms) antes de publicar.
-             Mientras tanto, el envío abre el correo del visitante con sus datos ya escritos.
-             La dirección de destino está en data-mailto. -->
-        <form class="contact-form" data-contact-form data-mailto="contacto@easypills.studio" novalidate>
+        <!-- El envío va a un script de Google que nos manda los datos por correo con el asunto "Contact Web - <nombre>".
+             Código del script: tools/contact-form.gs. Su dirección (URL de la aplicación web) va en data-endpoint. -->
+        <form class="contact-form" data-contact-form data-endpoint="https://script.google.com/macros/s/AKfycbzWcnDGLhKg5xs8Agxph8CPnu9xvyrd-l6wSahrkeCdXvWpIzsZOl5CJvRJUpCwgoIdVg/exec" novalidate>
           <div class="field">
             <label for="f-name">Nombre <span aria-hidden="true">*</span></label>
             <input id="f-name" name="nombre" type="text" autocomplete="name" required>
@@ -262,6 +261,11 @@
           <div class="field">
             <label for="f-phone">Teléfono <span aria-hidden="true">*</span></label>
             <input id="f-phone" name="telefono" type="tel" autocomplete="tel" inputmode="tel" required>
+          </div>
+          <!-- Campo trampa contra robots: las personas no lo ven y el script descarta los envíos que lo rellenan. -->
+          <div class="form-hp" aria-hidden="true">
+            <label for="f-website">Deja este campo vacío</label>
+            <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off">
           </div>
           <div class="field field-check">
             <input id="f-privacy" name="privacidad" type="checkbox" required>
