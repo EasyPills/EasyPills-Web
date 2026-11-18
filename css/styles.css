@@ -287,6 +287,33 @@ strong { font-weight: 700; color: var(--ink); }
 .menu-toggle { display: none; }
 .nav-easy { display: none; }
 
+/* Selector de idioma (ES · EN): a la derecha del menú en escritorio, junto al botón "Menú" en móvil */
+.site-nav { margin-left: auto; }
+.lang-switch {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-head);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.lang-switch a { padding: 6px 2px; color: var(--muted); text-decoration: none; }
+.lang-switch a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+.lang-switch [aria-current] { color: var(--ink); }
+.legal-header .lang-switch { margin-left: auto; }
+@media (max-width: 960px) {
+  .site-nav { margin-left: 0; }
+  .lang-switch { margin-left: auto; }
+}
+/* En móvil, la cabecera de las páginas legales (logo, idioma y botón) se compacta para caber en una línea */
+@media (max-width: 520px) {
+  .legal-header .header-inner { gap: 12px; }
+  .legal-header .brand img { height: 40px; }
+  .legal-header .btn { padding: 9px 14px; font-size: 0.82rem; }
+}
+
 /* ---------- Hero ---------- */
 .hero {
   position: relative;

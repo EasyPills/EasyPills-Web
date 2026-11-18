@@ -3,6 +3,53 @@
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const hasIO = "IntersectionObserver" in window;
 
+  /* ---------- Textos de la interfaz, según el idioma de la página (<html lang>) ---------- */
+  const TEXTS = {
+    es: {
+      menu: "Menú",
+      close: "Cerrar",
+      pause: "Pausar la animación del titular",
+      resume: "Reanudar la animación del titular",
+      playVideo: "Ver animación",
+      replayVideo: "Ver otra vez",
+      fieldErrors: {
+        nombre: "Escribe tu nombre, por favor.",
+        email: "Revisa tu correo electrónico: parece que falta algo.",
+        telefono: "Escribe un teléfono de contacto (al menos 9 cifras).",
+        privacidad: "Para enviarlo necesitamos que aceptes la política de privacidad.",
+      },
+      otherError: "Revisa los campos marcados.",
+      preview: "Vista previa: desde aquí no se envía nada. En la web publicada, tus datos nos llegarán por correo.",
+      send: "Enviar",
+      sending: "Enviando…",
+      sent: "¡Gracias! Hemos recibido tus datos y te escribiremos muy pronto.",
+      failed: "No hemos podido enviarlo. Inténtalo de nuevo o escríbenos a contacto@easypills.studio.",
+      todo: "Pendiente de crear",
+    },
+    en: {
+      menu: "Menu",
+      close: "Close",
+      pause: "Pause the headline animation",
+      resume: "Resume the headline animation",
+      playVideo: "Play animation",
+      replayVideo: "Watch again",
+      fieldErrors: {
+        nombre: "Please enter your name.",
+        email: "Please check your email address: something seems to be missing.",
+        telefono: "Please enter a contact phone number (at least 9 digits).",
+        privacidad: "To send it, we need you to accept the privacy policy.",
+      },
+      otherError: "Please check the highlighted fields.",
+      preview: "Preview: nothing is sent from here. On the live website, your details will reach us by email.",
+      send: "Send",
+      sending: "Sending…",
+      sent: "Thank you! We've received your details and will be in touch very soon.",
+      failed: "We couldn't send it. Please try again or email us at contacto@easypills.studio.",
+      todo: "Coming soon",
+    },
+  };
+  const t = TEXTS[document.documentElement.lang.slice(0, 2)] || TEXTS.es;
+
   /* ---------- Cabecera: sombra al hacer scroll ---------- */
   const header = document.querySelector("[data-header]");
   const onScroll = () => header.classList.toggle("is-scrolled", window.scrollY > 8);
@@ -15,7 +62,7 @@
   const toggleLabel = toggle.querySelector(".menu-toggle-label");
   const setMenu = (open) => {
     toggle.setAttribute("aria-expanded", String(open));
-    toggleLabel.textContent = open ? "Cerrar" : "Menú";
+    toggleLabel.textContent = open ? t.close : t.menu;
     menu.classList.toggle("is-open", open);
     document.body.classList.toggle("menu-open", open);
   };
@@ -60,7 +107,7 @@
     pauseButton.addEventListener("click", () => {
       paused = !paused;
       pauseButton.classList.toggle("is-paused", paused);
-      pauseButton.setAttribute("aria-label", paused ? "Reanudar la animación del titular" : "Pausar la animación del titular");
+      pauseButton.setAttribute("aria-label", paused ? t.resume : t.pause);
       schedule();
     });
     document.addEventListener("visibilitychange", schedule);
@@ -96,7 +143,7 @@
       });
     }, { rootMargin: "-45% 0px -50% 0px" });
     sections.forEach((s) => s && spy.observe(s));
-    const contact = document.getElementById("contacto");
+    const contact = document.querySelector("section.contact");
     if (contact) spy.observe(contact);
     // Arriba del todo (hero visible) no hay ninguna sección marcada
     const hero = document.querySelector(".hero");
@@ -119,11 +166,11 @@
         else if (!entry.isIntersecting && !video.paused) video.pause();
       }, { threshold: 0.55 }).observe(video);
     } else {
-      replay.innerHTML = '<span aria-hidden="true">▶</span> Ver animación';
+      replay.innerHTML = `<span aria-hidden="true">▶</span> ${t.playVideo}`;
       replay.hidden = false;
     }
     video.addEventListener("ended", () => {
-      replay.innerHTML = '<span aria-hidden="true">↺</span> Ver otra vez';
+      replay.innerHTML = `<span aria-hidden="true">↺</span> ${t.replayVideo}`;
       replay.hidden = false;
     });
     replay.addEventListener("click", () => { video.currentTime = 0; play(); });
@@ -137,12 +184,6 @@
     const error = form.querySelector("[data-form-error]");
     const status = form.querySelector("[data-form-status]");
     const button = form.querySelector('[type="submit"]');
-    const messages = {
-      nombre: "Escribe tu nombre, por favor.",
-      email: "Revisa tu correo electrónico: parece que falta algo.",
-      telefono: "Escribe un teléfono de contacto (al menos 9 cifras).",
-      privacidad: "Para enviarlo necesitamos que aceptes la política de privacidad.",
-    };
     const isInvalid = (el) => {
       if (el.type === "checkbox") return !el.checked;
       if (el.type === "tel") return el.value.replace(/\D/g, "").length < 9;
@@ -156,32 +197,32 @@
       const invalid = [...form.querySelectorAll("[required]")].find(isInvalid);
       if (invalid) {
         invalid.setAttribute("aria-invalid", "true");
-        error.textContent = messages[invalid.name] || "Revisa los campos marcados.";
+        error.textContent = t.fieldErrors[invalid.name] || t.otherError;
         error.hidden = false;
         invalid.focus();
         return;
       }
       if (form.hasAttribute("data-preview")) {
-        status.textContent = "Vista previa: desde aquí no se envía nada. En la web publicada, tus datos nos llegarán por correo.";
+        status.textContent = t.preview;
         status.hidden = false;
         return;
       }
       // Envío como formulario normal (sin cabeceras propias), para que Google lo acepte sin preguntas previas.
       button.disabled = true;
-      button.textContent = "Enviando…";
+      button.textContent = t.sending;
       try {
         const res = await fetch(form.dataset.endpoint, { method: "POST", body: new URLSearchParams(new FormData(form)) });
         const result = await res.json();
         if (!result.ok) throw new Error("rechazado");
         form.reset();
-        status.textContent = "¡Gracias! Hemos recibido tus datos y te escribiremos muy pronto.";
+        status.textContent = t.sent;
         status.hidden = false;
       } catch {
-        error.textContent = "No hemos podido enviarlo. Inténtalo de nuevo o escríbenos a contacto@easypills.studio.";
+        error.textContent = t.failed;
         error.hidden = false;
       } finally {
         button.disabled = false;
-        button.textContent = "Enviar";
+        button.textContent = t.send;
       }
     });
   }
@@ -199,7 +240,7 @@
 
   /* ---------- Enlaces pendientes (páginas legales, LinkedIn) ---------- */
   document.querySelectorAll("[data-todo]").forEach((a) => {
-    a.title = "Pendiente de crear";
+    a.title = t.todo;
     a.addEventListener("click", (e) => e.preventDefault());
   });
 
